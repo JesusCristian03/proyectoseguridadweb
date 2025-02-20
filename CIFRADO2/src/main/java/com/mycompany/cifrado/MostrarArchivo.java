@@ -72,9 +72,10 @@ public class MostrarArchivo {
     }
 
     public void mostrarDatosEnTablas(ArrayList<Byte> byteList) {//Este metodo para guardar en una tabla 
-        System.out.println("Tamaño de mi lista nueva"+byteList.size());
+      
+        System.out.println("Tamaño de mi lista nueva" + byteList.size());
         int filas = (int) Math.ceil(totalBytes / 11.0);//Se divide entre 11 para saber cuantas filas hay en total siendo el 11 el numero de columnas que hay que mostrar
-        System.out.println("filas :-> "+filas);
+        System.out.println("filas :-> " + filas);
         asciiData = new String[filas][12];//Crea un arreglo bidemensional que representan todos los caracteres toda la tabla ASCII
         hexData = new String[filas][12];//Crea un arreglo bidimensional que representa toda la tabla de Hexadecimal
 
@@ -85,7 +86,7 @@ public class MostrarArchivo {
 
             for (int j = 0; j < 11; j++) {//Recorre las columnas
                 int index = i * 11 + j;// Significa que estamos accediendo al byte en la posición index(x) del archivo.
-                System.out.print("{"+index+"}"+"("+j+")");
+                //System.out.print("{" + index + "}" + "(" + j + ")");
                 if (j == totalBytes) {
 
                 } else if (index < totalBytes) {//Aquí se verifica si el índice calculado es menor que el total de bytes en el archivo.
@@ -99,13 +100,13 @@ public class MostrarArchivo {
             }
             System.out.println("");
         }
-         for (int i = 0; i < asciiData.length; i++) { // Recorre filas
+        /*for (int i = 0; i < asciiData.length; i++) { // Recorre filas
             for (int j = 0; j < asciiData[i].length; j++) { // Recorre columnas
-                System.out.print("["+asciiData[i][j] + "]");
+                System.out.print("[" + asciiData[i][j] + "]");
             }
             System.out.println(); // Salto de línea por fila
-        }
+        }*/
 
     }
-    
+
 }

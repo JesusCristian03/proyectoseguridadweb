@@ -52,21 +52,24 @@ public class Interfaz extends javax.swing.JFrame {
     String[] columnNames = {"#", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A"};//Titulo de las columnas de ambas tablas
     MostrarArchivo abrir = new MostrarArchivo(); // Se necesita que los metodos sean globales del archivo analizado
     File archivo;//Se necesita el archivo global
-    ComportamientoDeTablas inicializarcomportamientoarchivo, inicializarcomportamientocifrado; //Inicializa comportamiento de mostrar bytes del archivo
-    MostrarCifrado archivoacifrar = new MostrarCifrado(); //Clase donde todo se puede para cifrar el archivo 
+    ComportamientoDeTablas inicializarcomportamientoarchivo,
+            inicializarcomportamientocifrado,
+            inicializarcomportamientodescifrado; //Inicializa comportamiento de mostrar bytes del archivo
+    OperacionesCifradosHash archivoacifrar = new OperacionesCifradosHash(); //Clase donde todo se puede para cifrar el archivo 
+    //Lo subi principalmente para descifrado 
+    MostrarArchivo archivonormal = new MostrarArchivo();//Usar los metodos para que pueda usar los bytes que se han mostrado 
 
     Tablas t1;
-    
+
     /**
      * Creates new form Interfaz
      */
     public Interfaz() {
         initComponents();
-        
-        //t1 = new Tablas();
-        
-        //jPanel3.add(t1);
 
+        t1 = new Tablas();
+
+        //jPanel3.add(t1);
         inicializarcomportamientoarchivo = new ComportamientoDeTablas(tableASCII,
                 tableHex,
                 spinnerSeleccion,
@@ -88,6 +91,16 @@ public class Interfaz extends javax.swing.JFrame {
         inicializarcomportamientocifrado.initListeners();
         inicializarcomportamientocifrado.configurarTablas();
         inicializarcomportamientocifrado.sincronizarColores();
+
+        inicializarcomportamientodescifrado = new ComportamientoDeTablas(tableASCII2,
+                tableHex2,
+                spinnerSeleccion2,
+                txtAsciiValue2,
+                txtHexValue2,
+                columnNames);
+        inicializarcomportamientodescifrado.initListeners();
+        inicializarcomportamientodescifrado.configurarTablas();
+        inicializarcomportamientodescifrado.sincronizarColores();
     }
 
     // Método para inicializar la sincronización
@@ -206,6 +219,7 @@ public class Interfaz extends javax.swing.JFrame {
         jlabelarchivo = new javax.swing.JLabel();
         jButtonAbrir = new javax.swing.JButton();
         jPanelTables = new javax.swing.JPanel();
+        jSplitPane1 = new javax.swing.JSplitPane();
         scrollPaneASCII = new javax.swing.JScrollPane();
         tableASCII = new javax.swing.JTable();
         scrollPaneHex = new javax.swing.JScrollPane();
@@ -221,6 +235,7 @@ public class Interfaz extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         Panel2 = new javax.swing.JPanel();
         jPanelTables1 = new javax.swing.JPanel();
+        jSplitPane3 = new javax.swing.JSplitPane();
         scrollPaneASCII1 = new javax.swing.JScrollPane();
         tableASCII1 = new javax.swing.JTable();
         scrollPaneHex1 = new javax.swing.JScrollPane();
@@ -237,6 +252,44 @@ public class Interfaz extends javax.swing.JFrame {
         txtPassword = new javax.swing.JTextField();
         btnCifrar = new javax.swing.JButton();
         Guardar = new javax.swing.JButton();
+        Panel3 = new javax.swing.JPanel();
+        jPanelTables2 = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        scrollPaneASCII2 = new javax.swing.JScrollPane();
+        tableASCII2 = new javax.swing.JTable();
+        scrollPaneHex2 = new javax.swing.JScrollPane();
+        tableHex2 = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        spinnerSeleccion2 = new javax.swing.JSpinner();
+        txtTotalBytes2 = new javax.swing.JTextField();
+        txtAsciiValue2 = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtHexValue2 = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtPassword1 = new javax.swing.JTextField();
+        btnDescifrar1 = new javax.swing.JButton();
+        Guardar1 = new javax.swing.JButton();
+        Panel4 = new javax.swing.JPanel();
+        jPanelTables3 = new javax.swing.JPanel();
+        jSplitPane4 = new javax.swing.JSplitPane();
+        scrollPaneASCII3 = new javax.swing.JScrollPane();
+        tableASCII3 = new javax.swing.JTable();
+        scrollPaneHex3 = new javax.swing.JScrollPane();
+        tableHex3 = new javax.swing.JTable();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        spinnerSeleccion3 = new javax.swing.JSpinner();
+        txtTotalBytes3 = new javax.swing.JTextField();
+        txtAsciiValue3 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        txtHexValue3 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        txtPassword2 = new javax.swing.JTextField();
+        btnDescifrar2 = new javax.swing.JButton();
+        Guardar2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CIFRADO Y DESCIFRADO");
@@ -257,6 +310,9 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         jPanelTables.setBackground(new java.awt.Color(255, 255, 204));
+        jPanelTables.setLayout(new java.awt.GridLayout());
+
+        jSplitPane1.setDividerLocation(337);
 
         tableASCII.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -273,6 +329,8 @@ public class Interfaz extends javax.swing.JFrame {
         tableASCII.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPaneASCII.setViewportView(tableASCII);
 
+        jSplitPane1.setLeftComponent(scrollPaneASCII);
+
         tableHex.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -288,26 +346,9 @@ public class Interfaz extends javax.swing.JFrame {
         tableHex.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPaneHex.setViewportView(tableHex);
 
-        javax.swing.GroupLayout jPanelTablesLayout = new javax.swing.GroupLayout(jPanelTables);
-        jPanelTables.setLayout(jPanelTablesLayout);
-        jPanelTablesLayout.setHorizontalGroup(
-            jPanelTablesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelTablesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPaneASCII, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(scrollPaneHex, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanelTablesLayout.setVerticalGroup(
-            jPanelTablesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelTablesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelTablesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollPaneHex, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(scrollPaneASCII, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        jSplitPane1.setRightComponent(scrollPaneHex);
+
+        jPanelTables.add(jSplitPane1);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 204));
 
@@ -371,7 +412,7 @@ public class Interfaz extends javax.swing.JFrame {
                         .addComponent(jButtonAbrir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(Panel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jPanelTables, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jPanelTables, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                     .addGroup(Panel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -386,7 +427,7 @@ public class Interfaz extends javax.swing.JFrame {
                     .addComponent(jTextFielddireccion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonAbrir))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelTables, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanelTables, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
                 .addGap(4, 4, 4)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -398,6 +439,8 @@ public class Interfaz extends javax.swing.JFrame {
         Panel2.setBackground(new java.awt.Color(255, 153, 153));
 
         jPanelTables1.setBackground(new java.awt.Color(255, 255, 204));
+
+        jSplitPane3.setDividerLocation(337);
 
         tableASCII1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -414,6 +457,8 @@ public class Interfaz extends javax.swing.JFrame {
         tableASCII1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPaneASCII1.setViewportView(tableASCII1);
 
+        jSplitPane3.setLeftComponent(scrollPaneASCII1);
+
         tableHex1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -429,25 +474,27 @@ public class Interfaz extends javax.swing.JFrame {
         tableHex1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         scrollPaneHex1.setViewportView(tableHex1);
 
+        jSplitPane3.setRightComponent(scrollPaneHex1);
+
         javax.swing.GroupLayout jPanelTables1Layout = new javax.swing.GroupLayout(jPanelTables1);
         jPanelTables1.setLayout(jPanelTables1Layout);
         jPanelTables1Layout.setHorizontalGroup(
             jPanelTables1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelTables1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(scrollPaneASCII1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(scrollPaneHex1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 686, Short.MAX_VALUE)
+            .addGroup(jPanelTables1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTables1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jSplitPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 686, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
         jPanelTables1Layout.setVerticalGroup(
             jPanelTables1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelTables1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelTables1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(scrollPaneHex1, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-                    .addComponent(scrollPaneASCII1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGap(0, 181, Short.MAX_VALUE)
+            .addGroup(jPanelTables1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTables1Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jSplitPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 204));
@@ -539,7 +586,7 @@ public class Interfaz extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(Panel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanelTables1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         Panel2Layout.setVerticalGroup(
@@ -547,12 +594,342 @@ public class Interfaz extends javax.swing.JFrame {
             .addGroup(Panel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanelTables1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("CIFRAR", Panel2);
+
+        Panel3.setBackground(new java.awt.Color(255, 153, 153));
+
+        jPanelTables2.setBackground(new java.awt.Color(255, 255, 204));
+
+        jSplitPane2.setDividerLocation(337);
+
+        tableASCII2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tableASCII2.setRowSelectionAllowed(false);
+        tableASCII2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollPaneASCII2.setViewportView(tableASCII2);
+
+        jSplitPane2.setLeftComponent(scrollPaneASCII2);
+
+        tableHex2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tableHex2.setRowSelectionAllowed(false);
+        tableHex2.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollPaneHex2.setViewportView(tableHex2);
+
+        jSplitPane2.setRightComponent(scrollPaneHex2);
+
+        javax.swing.GroupLayout jPanelTables2Layout = new javax.swing.GroupLayout(jPanelTables2);
+        jPanelTables2.setLayout(jPanelTables2Layout);
+        jPanelTables2Layout.setHorizontalGroup(
+            jPanelTables2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 686, Short.MAX_VALUE)
+            .addGroup(jPanelTables2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTables2Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jSplitPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 686, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        jPanelTables2Layout.setVerticalGroup(
+            jPanelTables2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 181, Short.MAX_VALUE)
+            .addGroup(jPanelTables2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTables2Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jSplitPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        jPanel3.setBackground(new java.awt.Color(255, 255, 204));
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel8.setText("posición /");
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel9.setText("ASCII:");
+
+        jLabel10.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel10.setText("HEX:");
+
+        jLabel11.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel11.setText("Contraseña");
+
+        btnDescifrar1.setText("DESCIFRAR");
+        btnDescifrar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescifrar1ActionPerformed(evt);
+            }
+        });
+
+        Guardar1.setText("GUARDAR");
+        Guardar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Guardar1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(spinnerSeleccion2, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtTotalBytes2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtAsciiValue2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtHexValue2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(174, 174, 174)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPassword1, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnDescifrar1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Guardar1)))
+                .addContainerGap(118, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(spinnerSeleccion2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtHexValue2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9)
+                    .addComponent(txtTotalBytes2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(txtAsciiValue2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel11)
+                    .addComponent(txtPassword1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDescifrar1)
+                    .addComponent(Guardar1))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout Panel3Layout = new javax.swing.GroupLayout(Panel3);
+        Panel3.setLayout(Panel3Layout);
+        Panel3Layout.setHorizontalGroup(
+            Panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(Panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelTables2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        Panel3Layout.setVerticalGroup(
+            Panel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanelTables2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("DESCIFRAR", Panel3);
+
+        Panel4.setBackground(new java.awt.Color(255, 153, 153));
+
+        jPanelTables3.setBackground(new java.awt.Color(255, 255, 204));
+
+        jSplitPane4.setDividerLocation(337);
+
+        tableASCII3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tableASCII3.setRowSelectionAllowed(false);
+        tableASCII3.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollPaneASCII3.setViewportView(tableASCII3);
+
+        jSplitPane4.setLeftComponent(scrollPaneASCII3);
+
+        tableHex3.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tableHex3.setRowSelectionAllowed(false);
+        tableHex3.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollPaneHex3.setViewportView(tableHex3);
+
+        jSplitPane4.setRightComponent(scrollPaneHex3);
+
+        javax.swing.GroupLayout jPanelTables3Layout = new javax.swing.GroupLayout(jPanelTables3);
+        jPanelTables3.setLayout(jPanelTables3Layout);
+        jPanelTables3Layout.setHorizontalGroup(
+            jPanelTables3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 686, Short.MAX_VALUE)
+            .addGroup(jPanelTables3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTables3Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jSplitPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 686, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+        jPanelTables3Layout.setVerticalGroup(
+            jPanelTables3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 181, Short.MAX_VALUE)
+            .addGroup(jPanelTables3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanelTables3Layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jSplitPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 204));
+
+        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel12.setText("posición /");
+
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel13.setText("ASCII:");
+
+        jLabel14.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel14.setText("HEX:");
+
+        jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel15.setText("Contraseña");
+
+        btnDescifrar2.setText("DESCIFRAR");
+        btnDescifrar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDescifrar2ActionPerformed(evt);
+            }
+        });
+
+        Guardar2.setText("GUARDAR");
+        Guardar2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Guardar2ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(75, 75, 75)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(spinnerSeleccion3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtTotalBytes3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtAsciiValue3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtHexValue3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(174, 174, 174)
+                        .addComponent(jLabel15)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnDescifrar2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(Guardar2)))
+                .addContainerGap(118, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(spinnerSeleccion3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtHexValue3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(txtTotalBytes3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(txtAsciiValue3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
+                    .addComponent(txtPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDescifrar2)
+                    .addComponent(Guardar2))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout Panel4Layout = new javax.swing.GroupLayout(Panel4);
+        Panel4.setLayout(Panel4Layout);
+        Panel4Layout.setHorizontalGroup(
+            Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanelTables3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        Panel4Layout.setVerticalGroup(
+            Panel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanelTables3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("HASH", Panel4);
 
         javax.swing.GroupLayout PanelPrincipalLayout = new javax.swing.GroupLayout(PanelPrincipal);
         PanelPrincipal.setLayout(PanelPrincipalLayout);
@@ -568,11 +945,10 @@ public class Interfaz extends javax.swing.JFrame {
         PanelPrincipalLayout.setVerticalGroup(
             PanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(PanelPrincipalLayout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(Panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 294, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(80, Short.MAX_VALUE))
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -583,9 +959,7 @@ public class Interfaz extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(PanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(PanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -624,9 +998,8 @@ public class Interfaz extends javax.swing.JFrame {
     }
     private void btnCifrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCifrarActionPerformed
 
-        MostrarArchivo archivonormal = new MostrarArchivo();
-
         try {
+
             // Se necesita para que procese el archivo y funcione los metodos
 //           archivonormal.procesarArchivo(archivo);
             //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
@@ -656,6 +1029,39 @@ public class Interfaz extends javax.swing.JFrame {
         // TODO add your handling code here:
         inicializarcomportamientocifrado.guardarArchivo(this, archivoacifrar.getEncryptedBytes());
     }//GEN-LAST:event_GuardarActionPerformed
+
+    private void btnDescifrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar1ActionPerformed
+        // TODO add your handling code here:
+        archivoacifrar.DescifrarBytes(archivoacifrar.getEncryptedBytes(), txtPassword1.getText());
+        //Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
+        inicializarcomportamientodescifrado.setByteList(archivoacifrar.getBytesOriginales());
+        inicializarcomportamientodescifrado.setTotalBytes(archivoacifrar.getBytesOriginales().size());
+
+        archivonormal.mostrarDatosEnTablas(archivoacifrar.getBytesOriginales());
+
+        //Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
+        //para que use los getters dentro de inicializar las tablas y pueda obtener los arreglos bidimensionales de los 
+        //bytes cifrados y puedan mostrarse en tablas
+        inicializartablas(txtTotalBytes2, 
+                spinnerSeleccion2, 
+                tableASCII2, 
+                tableHex2, 
+                archivonormal);
+    }//GEN-LAST:event_btnDescifrar1ActionPerformed
+
+    private void Guardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Guardar1ActionPerformed
+        // TODO add your handling code here:
+        inicializarcomportamientodescifrado.guardarArchivo(this, archivoacifrar.getBytesOriginales());
+        
+    }//GEN-LAST:event_Guardar1ActionPerformed
+
+    private void btnDescifrar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDescifrar2ActionPerformed
+
+    private void Guardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Guardar2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_Guardar2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -694,41 +1100,81 @@ public class Interfaz extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Guardar;
+    private javax.swing.JButton Guardar1;
+    private javax.swing.JButton Guardar2;
     private javax.swing.JPanel Panel1;
     private javax.swing.JPanel Panel2;
+    private javax.swing.JPanel Panel3;
+    private javax.swing.JPanel Panel4;
     private javax.swing.JPanel PanelPrincipal;
     private javax.swing.JButton btnCifrar;
+    private javax.swing.JButton btnDescifrar1;
+    private javax.swing.JButton btnDescifrar2;
     private javax.swing.JButton jButtonAbrir;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanelTables;
     private javax.swing.JPanel jPanelTables1;
+    private javax.swing.JPanel jPanelTables2;
+    private javax.swing.JPanel jPanelTables3;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JSplitPane jSplitPane3;
+    private javax.swing.JSplitPane jSplitPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextFielddireccion;
     private javax.swing.JLabel jlabelarchivo;
     private javax.swing.JScrollPane scrollPaneASCII;
     private javax.swing.JScrollPane scrollPaneASCII1;
+    private javax.swing.JScrollPane scrollPaneASCII2;
+    private javax.swing.JScrollPane scrollPaneASCII3;
     private javax.swing.JScrollPane scrollPaneHex;
     private javax.swing.JScrollPane scrollPaneHex1;
+    private javax.swing.JScrollPane scrollPaneHex2;
+    private javax.swing.JScrollPane scrollPaneHex3;
     private javax.swing.JSpinner spinnerSeleccion;
     private javax.swing.JSpinner spinnerSeleccion1;
+    private javax.swing.JSpinner spinnerSeleccion2;
+    private javax.swing.JSpinner spinnerSeleccion3;
     private javax.swing.JTable tableASCII;
     private javax.swing.JTable tableASCII1;
+    private javax.swing.JTable tableASCII2;
+    private javax.swing.JTable tableASCII3;
     private javax.swing.JTable tableHex;
     private javax.swing.JTable tableHex1;
+    private javax.swing.JTable tableHex2;
+    private javax.swing.JTable tableHex3;
     private javax.swing.JTextField txtAsciiValue;
     private javax.swing.JTextField txtAsciiValue1;
+    private javax.swing.JTextField txtAsciiValue2;
+    private javax.swing.JTextField txtAsciiValue3;
     private javax.swing.JTextField txtHexValue;
     private javax.swing.JTextField txtHexValue1;
+    private javax.swing.JTextField txtHexValue2;
+    private javax.swing.JTextField txtHexValue3;
     private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtPassword1;
+    private javax.swing.JTextField txtPassword2;
     private javax.swing.JTextField txtTotalBytes;
     private javax.swing.JTextField txtTotalBytes1;
+    private javax.swing.JTextField txtTotalBytes2;
+    private javax.swing.JTextField txtTotalBytes3;
     // End of variables declaration//GEN-END:variables
 }
