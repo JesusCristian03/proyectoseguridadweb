@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -49,15 +50,17 @@ public class Interfaz extends javax.swing.JFrame {
     private ArrayList<Byte> byteList = new ArrayList<>();
     private int totalBytes = 0;//El total de bytes del archivo abierto
     String ruta;//La ruta del archivo abierto
-    String[] columnNames = {"#", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A"};//Titulo de las columnas de ambas tablas
+    String[] columnNames = {"#", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};//Titulo de las columnas de ambas tablas
     MostrarArchivo abrir = new MostrarArchivo(); // Se necesita que los metodos sean globales del archivo analizado
     File archivo;//Se necesita el archivo global
     ComportamientoDeTablas inicializarcomportamientoarchivo,
             inicializarcomportamientocifrado,
-            inicializarcomportamientodescifrado; //Inicializa comportamiento de mostrar bytes del archivo
-    OperacionesCifradosHash archivoacifrar = new OperacionesCifradosHash(); //Clase donde todo se puede para cifrar el archivo 
+            inicializarcomportamientodescifrado,
+            inicializarcomportamientodehash; //Inicializa comportamiento de mostrar bytes del archivo
+    OperacionesCifradosHash metodosarchivo = new OperacionesCifradosHash(); //Clase donde todo se puede para cifrar el archivo 
     //Lo subi principalmente para descifrado 
     MostrarArchivo archivonormal = new MostrarArchivo();//Usar los metodos para que pueda usar los bytes que se han mostrado 
+    MostrarArchivo archivonormalhash = new MostrarArchivo();//Usar los metodos para que pueda usar los bytes que se han mostrado 
 
     Tablas t1;
 
@@ -70,6 +73,7 @@ public class Interfaz extends javax.swing.JFrame {
         t1 = new Tablas();
 
         //jPanel3.add(t1);
+        //COMPORTAMIENTO TABLAS ARCHIVO
         inicializarcomportamientoarchivo = new ComportamientoDeTablas(tableASCII,
                 tableHex,
                 spinnerSeleccion,
@@ -80,7 +84,7 @@ public class Interfaz extends javax.swing.JFrame {
         inicializarcomportamientoarchivo.initListeners();
         inicializarcomportamientoarchivo.configurarTablas();  // Configura títulos y bloquea columnas
         inicializarcomportamientoarchivo.sincronizarColores();// Llamar a la función para sincronizar los colores
-
+        //COMPORTAMIENTO TABLAS CIFRADO
         inicializarcomportamientocifrado = new ComportamientoDeTablas(tableASCII1,
                 tableHex1,
                 spinnerSeleccion1,
@@ -91,7 +95,7 @@ public class Interfaz extends javax.swing.JFrame {
         inicializarcomportamientocifrado.initListeners();
         inicializarcomportamientocifrado.configurarTablas();
         inicializarcomportamientocifrado.sincronizarColores();
-
+        //COMPORTAMIENTO TABLAS DESCIFRADO
         inicializarcomportamientodescifrado = new ComportamientoDeTablas(tableASCII2,
                 tableHex2,
                 spinnerSeleccion2,
@@ -101,6 +105,17 @@ public class Interfaz extends javax.swing.JFrame {
         inicializarcomportamientodescifrado.initListeners();
         inicializarcomportamientodescifrado.configurarTablas();
         inicializarcomportamientodescifrado.sincronizarColores();
+
+        //COMPORTAMIENTO TABLAS HASH
+        inicializarcomportamientodehash = new ComportamientoDeTablas(tableASCII2,
+                tableHex3,
+                spinnerSeleccion3,
+                txtAsciiValue3,
+                txtHexValue3,
+                columnNames);
+        inicializarcomportamientodehash.initListeners();
+        inicializarcomportamientodehash.configurarTablas();
+        inicializarcomportamientodehash.sincronizarColores();
     }
 
     // Método para inicializar la sincronización
@@ -288,8 +303,7 @@ public class Interfaz extends javax.swing.JFrame {
         txtHexValue3 = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         txtPassword2 = new javax.swing.JTextField();
-        btnDescifrar2 = new javax.swing.JButton();
-        Guardar2 = new javax.swing.JButton();
+        CalcularHash = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CIFRADO Y DESCIFRADO");
@@ -310,7 +324,7 @@ public class Interfaz extends javax.swing.JFrame {
         });
 
         jPanelTables.setBackground(new java.awt.Color(255, 255, 204));
-        jPanelTables.setLayout(new java.awt.GridLayout());
+        jPanelTables.setLayout(new java.awt.GridLayout(1, 0));
 
         jSplitPane1.setDividerLocation(337);
 
@@ -839,19 +853,12 @@ public class Interfaz extends javax.swing.JFrame {
         jLabel14.setText("HEX:");
 
         jLabel15.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel15.setText("Contraseña");
+        jLabel15.setText("HASH");
 
-        btnDescifrar2.setText("DESCIFRAR");
-        btnDescifrar2.addActionListener(new java.awt.event.ActionListener() {
+        CalcularHash.setText("CALCULAR");
+        CalcularHash.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDescifrar2ActionPerformed(evt);
-            }
-        });
-
-        Guardar2.setText("GUARDAR");
-        Guardar2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Guardar2ActionPerformed(evt);
+                CalcularHashActionPerformed(evt);
             }
         });
 
@@ -860,32 +867,30 @@ public class Interfaz extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(75, 75, 75)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(75, 75, 75)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(spinnerSeleccion3, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtTotalBytes3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel13)
+                        .addComponent(jLabel13))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(txtAsciiValue3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel14)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtHexValue3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(174, 174, 174)
-                        .addComponent(jLabel15)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnDescifrar2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(Guardar2)))
-                .addContainerGap(118, Short.MAX_VALUE))
+                    .addComponent(CalcularHash))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -899,12 +904,11 @@ public class Interfaz extends javax.swing.JFrame {
                     .addComponent(txtTotalBytes3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
                     .addComponent(txtAsciiValue3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15)
                     .addComponent(txtPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnDescifrar2)
-                    .addComponent(Guardar2))
+                    .addComponent(CalcularHash))
                 .addContainerGap())
         );
 
@@ -990,8 +994,11 @@ public class Interfaz extends javax.swing.JFrame {
 
         txtTotalBytes.setText(String.valueOf(abrir.getTotalBytes()));
         // Ajustar el Spinner al rango correcto
-        System.out.println("Total de bytes: " + abrir.getTotalBytes());
+      
         spinnerSeleccion.setModel(new SpinnerNumberModel(0, 0, abrir.getTotalBytes() - 1, 1));
+        // Limpiar los modelos antes de insertar nuevos datos
+        tableASCII.setModel(new DefaultTableModel());  // Vacía la tabla
+        tableHex.setModel(new DefaultTableModel());    // Vacía la tabla
 
         tableASCII.setModel(new DefaultTableModel(abrir.getAsciiData(), columnNames));//Esto actualiza la tabla con nuevos datos.
         tableHex.setModel(new DefaultTableModel(abrir.getHexData(), columnNames));
@@ -999,7 +1006,6 @@ public class Interfaz extends javax.swing.JFrame {
     private void btnCifrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCifrarActionPerformed
 
         try {
-
             // Se necesita para que procese el archivo y funcione los metodos
 //           archivonormal.procesarArchivo(archivo);
             //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
@@ -1009,12 +1015,12 @@ public class Interfaz extends javax.swing.JFrame {
             //Verifica que la contraseña no este vacia
             //Lee el archivo y saca los bytes de la contraseña
             //cifra con los 9 pasos 
-            archivoacifrar.cifrarArchivo(ruta, txtPassword.getText(), this); //Cifra el archivo con los bytes que contiene y la contraseña
+            metodosarchivo.cifrarArchivo(ruta, txtPassword.getText(), this); //Cifra el archivo con los bytes que contiene y la contraseña
             //Devuelve la lista de bytes ya cifrados y se los da a mostrarDatosEnTablas
             //para que pueda acomodarlos en los arreglos bidimensionales que iran en las tablas correspondientes de cifrado
-            archivonormal.mostrarDatosEnTablas(archivoacifrar.getEncryptedBytes());
+            archivonormal.mostrarDatosEnTablas(metodosarchivo.getEncryptedBytes());
             //Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
-            inicializarcomportamientocifrado.setByteList(archivoacifrar.getEncryptedBytes());
+            inicializarcomportamientocifrado.setByteList(metodosarchivo.getEncryptedBytes());
             inicializarcomportamientocifrado.setTotalBytes(totalBytes);
             //Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
             //para que use los getters dentro de inicializar las tablas y pueda obtener los arreglos bidimensionales de los 
@@ -1027,41 +1033,73 @@ public class Interfaz extends javax.swing.JFrame {
 
     private void GuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarActionPerformed
         // TODO add your handling code here:
-        inicializarcomportamientocifrado.guardarArchivo(this, archivoacifrar.getEncryptedBytes());
+        inicializarcomportamientocifrado.guardarArchivo(this, metodosarchivo.getEncryptedBytes());
     }//GEN-LAST:event_GuardarActionPerformed
 
     private void btnDescifrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar1ActionPerformed
-        // TODO add your handling code here:
-        archivoacifrar.DescifrarBytes(archivoacifrar.getEncryptedBytes(), txtPassword1.getText());
-        //Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
-        inicializarcomportamientodescifrado.setByteList(archivoacifrar.getBytesOriginales());
-        inicializarcomportamientodescifrado.setTotalBytes(archivoacifrar.getBytesOriginales().size());
 
-        archivonormal.mostrarDatosEnTablas(archivoacifrar.getBytesOriginales());
-
-        //Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
+        //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
+        archivonormal.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));
+        archivonormal.setTotalBytes(archivonormal.convertirAArrayList(archivonormal.getAsciiData()).size());
+// TODO add your handling code here:
+        metodosarchivo.DescifrarBytes(metodosarchivo.getEncryptedBytes(), txtPassword1.getText());
+// listatitulos
+//ArrayList<Byte> byteList
+//convertirAArrayList(ascii y hex)
+        //  archivonormal.mostrarDatosEnTablas(metodosarchivo.getBytesOriginales());
+        archivonormal.convertirAFormatoTabla(metodosarchivo.getDesencryptedBytes(), 11);
+//Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
+        inicializarcomportamientodescifrado.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));//Convierte el ascii[][] a un arraylist
+        inicializarcomportamientodescifrado.setTotalBytes(archivonormal.convertirAArrayList(archivonormal.getAsciiData()).size());
+//Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
         //para que use los getters dentro de inicializar las tablas y pueda obtener los arreglos bidimensionales de los 
         //bytes cifrados y puedan mostrarse en tablas
-        inicializartablas(txtTotalBytes2, 
-                spinnerSeleccion2, 
-                tableASCII2, 
-                tableHex2, 
+        inicializartablas(txtTotalBytes2,
+                spinnerSeleccion2,
+                tableASCII2,
+                tableHex2,
                 archivonormal);
     }//GEN-LAST:event_btnDescifrar1ActionPerformed
 
     private void Guardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Guardar1ActionPerformed
         // TODO add your handling code here:
-        inicializarcomportamientodescifrado.guardarArchivo(this, archivoacifrar.getBytesOriginales());
-        
+        inicializarcomportamientodescifrado.guardarArchivo(this, metodosarchivo.getBytesOriginales());
+
     }//GEN-LAST:event_Guardar1ActionPerformed
 
-    private void btnDescifrar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar2ActionPerformed
+    private void CalcularHashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CalcularHashActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnDescifrar2ActionPerformed
+        // Se necesita para que procese el archivo y funcione los metodos
+        //SIENTO QUE NO ES NECESARIO YA QUE ARRIBA YA LOS INICIALICE
+        //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
+        //archivonormal.setByteList(byteList);
+        // archivonormal.setTotalBytes(totalBytes);
 
-    private void Guardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Guardar2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_Guardar2ActionPerformed
+        // metodosarchivo.DescifrarBytes(metodosarchivo.getEncryptedBytes(), "nada");
+        //Inicializa los comportamientos de las tablas de hash no se ocupa contraseña por lo tanto nada     
+        metodosarchivo.setBytesOriginales(byteList);//ByteList son la lista de bytes tomadas del archivo de texto algunos pasos de hash van a requerir que recorra todo el arraylist
+        metodosarchivo.generarHashNuevo();
+        ArrayList<Byte> listaBytes = new ArrayList<>(); //Vamos a convertir un arreglo de bytes a un arraylist de bytes
+        byte[] arregloBytes = new byte[10];
+        //RECIBO LA CADENA DE TEXTO DEL HASH PARA PASARLO A UN ARREGLO DE BYTES SUS VALORES EN ASCII
+        arregloBytes = metodosarchivo.getCharHash().getBytes();//Recorro el arreglo de hash que maximo son 10 para ponerlos en la tabla
+        // Recorrer el arreglo y agregar cada byte al ArrayList
+        for (byte b : arregloBytes) {
+            listaBytes.add(b);
+        }
+
+        // archivonormalhash.setAsciiData(archivonormalhash.reemplazarValores(archivonormalhash.getAsciiData()));
+// Convertir char[] a String y concatenar
+        txtPassword2.setText(metodosarchivo.getCharHash());
+        inicializarcomportamientodehash.setByteList(listaBytes);//Para ponerlos en textfield
+        inicializarcomportamientodehash.setTotalBytes(listaBytes.size());
+        archivonormalhash.convertirAFormatoTabla(listaBytes, 11);
+        inicializartablas(txtTotalBytes3,
+                spinnerSeleccion3,
+                tableASCII3,
+                tableHex3,
+                archivonormalhash);
+    }//GEN-LAST:event_CalcularHashActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1099,9 +1137,9 @@ public class Interfaz extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton CalcularHash;
     private javax.swing.JButton Guardar;
     private javax.swing.JButton Guardar1;
-    private javax.swing.JButton Guardar2;
     private javax.swing.JPanel Panel1;
     private javax.swing.JPanel Panel2;
     private javax.swing.JPanel Panel3;
@@ -1109,7 +1147,6 @@ public class Interfaz extends javax.swing.JFrame {
     private javax.swing.JPanel PanelPrincipal;
     private javax.swing.JButton btnCifrar;
     private javax.swing.JButton btnDescifrar1;
-    private javax.swing.JButton btnDescifrar2;
     private javax.swing.JButton jButtonAbrir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

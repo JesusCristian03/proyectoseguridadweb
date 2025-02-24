@@ -154,7 +154,7 @@ public class ComportamientoDeTablas {
                         spinnerSeleccion.setValue(index);
 
                         // Actualizar los valores en los JTextField
-                        byte selectedByte = byteList.get(index - 1);
+                        byte selectedByte = byteList.get(index);
                         txtAsciiValue.setText(String.valueOf((char) selectedByte));
                         txtHexValue.setText(String.format("%02X", selectedByte));
 

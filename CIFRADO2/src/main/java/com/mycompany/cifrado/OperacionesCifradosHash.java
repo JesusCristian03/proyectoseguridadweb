@@ -18,10 +18,36 @@ import javax.swing.JOptionPane;
  */
 public class OperacionesCifradosHash {
 
-    ArrayList<Byte> encryptedBytes, bytesOriginales;
+    ArrayList<Byte> encryptedBytes, bytesOriginales, DesencryptedBytes;
     char[] rangoSalida = "0123456789abcdefghijklmnopqrstuvwxyz".toCharArray();//Rango de bytes aceptados
     byte[] bytesHash = new byte[10]; // Salida de 10 caracteres
-    byte[] datos = "Hola Mundo, esto es una rueba de hash".getBytes();//Mensaje del archivo
+    // ArrayList <<datos = "Hola Mundo, esto es una rueba de hash".getBytes();//Mensaje del archivo
+    String charHash = "";//Para recibir los caracteres imprimibles en el textfield
+
+    public ArrayList<Byte> getDesencryptedBytes() {
+        return DesencryptedBytes;
+    }
+
+    public void setDesencryptedBytes(ArrayList<Byte> DesencryptedBytes) {
+        this.DesencryptedBytes = DesencryptedBytes;
+    }
+
+    public String getCharHash() {
+        return charHash;
+    }
+
+    public void setCharHash(String charHash) {
+        this.charHash = charHash;
+    }
+
+    public byte[] getBytesHash() {
+        return bytesHash;
+    }
+
+    public void setBytesHash(byte[] bytesHash) {
+        this.bytesHash = bytesHash;
+    }
+
 //03mtmr6q95
     public ArrayList<Byte> getBytesOriginales() {
         return bytesOriginales;
@@ -39,8 +65,8 @@ public class OperacionesCifradosHash {
         }
 
         byte[] fileBytes = leerArchivo(filePath);
-        byte[] passwordBytes = password.getBytes();
-        encryptedBytes = cifrarBytes(fileBytes, passwordBytes);
+
+        encryptedBytes = cifrarBytes(fileBytes, password);
 
     }
 
@@ -61,162 +87,135 @@ public class OperacionesCifradosHash {
         return data;
     }
 
-    public ArrayList<Byte> cifrarBytes(byte[] data, byte[] key) {
+    public ArrayList<Byte> cifrarBytes(byte[] datos, String contraseña) {
         ArrayList<Byte> result = new ArrayList<>();
 
-        for (int i = 0; i < data.length; i++) {
-            int b = data[i] & 0xFF; // Asegurar valores positivos (0-255)
+        int[] claves = generarClaves(contraseña);
+        byte[] resultado = new byte[datos.length];
 
-            // Paso 1: Sumar el primer byte de la contraseña y limitar a 0-255
-            b = (b + (key[0] & 0xFF)) % 256;
+        for (int i = 0; i < datos.length; i++) {
+            byte b = datos[i];
 
-            // Paso 2: XOR con el segundo byte de la contraseña
-            b = (b ^ (key[1] & 0xFF)) & 0xFF;
+            // Pasos de cifrado (9 operaciones)
+            b = (byte) (b ^ claves[0]);
+            b = (byte) ((b + claves[1]) % 256);
+            b = rotarIzquierda(b, 3);
+            b = (byte) ((b * claves[2]) % 256);
+            b = (byte) ((b - claves[3] + 256) % 256);
+            b = (byte) (b ^ claves[4]);
+            b = rotarDerecha(b, 2);
+            b = (byte) ((b + claves[5]) % 256);
+            b = (byte) (b ^ claves[6]);
+            resultado[i] = b;
+        }
 
-            // Paso 3: Multiplicar por el tercer byte y asegurar valores positivos
-            b = ((b * ((key[2] & 0xFF) | 1)) % 256) & 0xFF; // Evitar multiplicar por 0
-
-            // Paso 4: Aplicar OR con el cuarto byte de la contraseña
-            b = (b | (key[3] & 0xFF)) & 0xFF;
-
-            // Paso 5: Aplicar AND con la inversa del primer byte de la contraseña
-            b = (b & ~(key[0] & 0xFF)) & 0xFF;
-
-            // Paso 6: Rotar bits a la izquierda (asegurando que el desplazamiento sea válido)
-            int shift = ((key[1] & 0x07) + 1) % 8; // Asegurar desplazamiento válido
-            b = ((b << shift) | (b >>> (8 - shift))) & 0xFF;
-
-            // Paso 7: Ajustar índice y asegurar valores positivos
-            b = ((b - i + 256) % 256) & 0xFF;
-
-            // Paso 8: Intercambiar mitades de los bits (bits altos y bajos)
-            b = (((b & 0xF0) >> 4) | ((b & 0x0F) << 4)) & 0xFF;
-
-            // Paso 9: Asegurar rango ASCII imprimible (32-126, 160-255)
-            if (b < 32) {
-                b = 32 + (b % (126 - 32));
-            }
-            if (b > 126 && b < 160) {
-                b = 160 + (b % (255 - 160));
-            }
-
-            result.add((byte) b); // Agregar el byte cifrado a la lista
-            //System.out.print("["+b+"]");
+// Convertir el arreglo a ArrayList
+        for (byte b : resultado) {
+            result.add(b);
         }
         return result;
     }
+    // Métodos auxiliares (generarClaves, rotaciones, inversoModular)
+    // ... (Mantener igual que en la versión anterior)
 
-    public void DescifrarBytes(ArrayList<Byte> bytesCifrados, String password) {
-        bytesOriginales = new ArrayList<>();
+    public int[] generarClaves(String contraseña) {
+        byte[] bytesContraseña = contraseña.getBytes();
+        int[] claves = new int[7];
 
-        // Asegurar que la contraseña tenga al menos 4 caracteres
-        while (password.length() < 4) {
-            password += " "; // Se rellena con espacios si es menor a 4 caracteres
+        // Generación de claves derivadas de la contraseña
+        for (int i = 0; i < 7; i++) {
+            claves[i] = (i < bytesContraseña.length)
+                    ? (bytesContraseña[i] & 0xFF)
+                    : (claves[i % 3] * (i + 1)) % 256;
+
+            // Asegurar que la clave de multiplicación sea impar
+            if (i == 2 && claves[i] % 2 == 0) {
+                claves[i] = (claves[i] + 1) % 256;
+            }
         }
+        return claves;
+    }
 
-        // Obtener los primeros 4 caracteres de la contraseña
-        byte v1 = (byte) password.charAt(0);
-        byte v2 = (byte) password.charAt(1);
-        byte v3 = (byte) password.charAt(2);
-        byte v4 = (byte) password.charAt(3);
+    public byte rotarIzquierda(byte b, int bits) {
+        int val = (b & 0xFF);
+        return (byte) ((val << bits | val >>> (8 - bits)) & 0xFF);
+    }
+
+    public byte rotarDerecha(byte b, int bits) {
+        int val = (b & 0xFF);
+        return (byte) ((val >>> bits | val << (8 - bits)) & 0xFF);
+    }
+
+    public int inversoModular(int a) {
+        // Calcula el inverso multiplicativo módulo 256
+        for (int i = 1; i < 256; i++) {
+            if ((a * i) % 256 == 1) {
+                return i;
+            }
+        }
+        return 1;
+    }
+    
+
+    public ArrayList<Byte> DescifrarBytes(ArrayList<Byte> bytesCifrados, String password) {
+        ArrayList<Byte> result = new ArrayList<>();
+
+        int[] claves = generarClaves(password);
+        byte[] resultado = new byte[bytesCifrados.size()];
 
         for (int i = 0; i < bytesCifrados.size(); i++) {
             byte b = bytesCifrados.get(i);
 
-            // Paso 9 - Deshacer XOR con v3 y v4
-            b = (byte) (b ^ (v3 | v4));
-
-            // Paso 8 - Deshacer suma con la media de la contraseña
-            byte avg = (byte) ((v1 + v2 + v3 + v4) / 4);
-            b = (byte) (b - avg);
-
-            // Paso 7 - Deshacer XOR con v1 y v2
-            b = (byte) (b ^ (v1 & v2));
-
-            // Paso 6 - Deshacer rotación a la derecha por v2 posiciones
-            b = rotarIzquierda(b, v2 % 8); // Rotación inversa
-
-            // Paso 5 - Deshacer XOR con el índice
-            b = (byte) (b ^ i);
-
-            // Paso 4 - Deshacer suma con v4
-            b = (byte) (b - v4);
-
-            // Paso 3 - Deshacer AND con 0x7F (esto no afecta en reversa)
-            b = (byte) (b | 0x80); // Se restablecen los bits
-
-            // Paso 2 - Deshacer multiplicación con v3 (siempre que sea seguro)
-            if (v3 != 0) {
-                b = (byte) (b / v3);
-            }
-
-            // Paso 1 - Deshacer suma con v1
-            b = (byte) (b - v1);
-
-            bytesOriginales.add(b);
-            System.out.print("[" + b + "]");
+            // Pasos inversos de descifrado
+            b = (byte) (b ^ claves[6]);
+            b = (byte) ((b - claves[5] + 256) % 256);
+            b = rotarIzquierda(b, 2);
+            b = (byte) (b ^ claves[4]);
+            b = (byte) ((b + claves[3]) % 256);
+            b = (byte) ((b * inversoModular(claves[2])) % 256);
+            b = rotarDerecha(b, 3);
+            b = (byte) ((b - claves[1] + 256) % 256);
+            b = (byte) (b ^ claves[0]);
+            resultado[i] = b;
         }
-    }
+        // Convertir el arreglo a ArrayList
+        for (byte b : resultado) {
+            result.add(b);
 
-    public static byte rotarIzquierda(byte b, int posiciones) {
-        return (byte) ((b << posiciones) | ((b & 0xFF) >>> (8 - posiciones)));
-    }
-
-    public String generarHash(byte[] arrayBytes) {
-
-        // Paso 1: Inicialización con un número primo y XOR con la longitud
-        int hashSeed = 31; // Número primo como semilla
-        for (int i = 0; i < bytesHash.length; i++) {
-            bytesHash[i] = (byte) (hashSeed ^ arrayBytes.length);
         }
 
-        // Paso 2: Suma ponderada y módulo
-        int sum = 0;
-        for (int i = 0; i < arrayBytes.length; i++) {
-            sum += arrayBytes[i] * (i + 1); // Suma ponderada
+        for (int i = 0; i < result.size(); i++) {
+            System.out.print("{" + result.get(i) + "}");
         }
-        for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] + sum) % 256);
-        }
-
-        // Paso 3: Desplazamiento de bits y mezcla circular
-        for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] << 3) | (bytesHash[j] >>> 5));
-        }
-
-        // Paso 4: Rotación basada en el índice
-        for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] >>> (j % 4 + 1)) | (bytesHash[j] << (8 - (j % 4 + 1))));
-        }
-
-        // Paso 5: Multiplicación y XOR acumulativo
-        byte xorVal = 7; // Número arbitrario para la mezcla
-        for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] * 17) ^ xorVal);
-            xorVal = bytesHash[j]; // Acumulación de valores XOR
-        }
-
-        // Paso 6: Convertir a caracteres alfanuméricos
-        StringBuilder hashFinal = new StringBuilder();
-        for (int j = 0; j < bytesHash.length; j++) {
-            hashFinal.append(rangoSalida[Byte.toUnsignedInt(bytesHash[j]) % rangoSalida.length]);
-        }
-
-        System.out.println("Hash generado: " + generarHash(datos));
-        return hashFinal.toString();
+        DesencryptedBytes = result;
+        return result;
     }
 
     public void generarHashNuevo() {
+        bytesHash = new byte[10];
         Hashpaso1();
         Hashpaso2();
         Hashpaso3();
         Hashpaso4();
         Hashpaso5();
         Hashpaso6();
+        ConvertirPosicionACaracter();
+        /*
         for (int i = 0; i < bytesHash.length; i++) {
-             // System.out.print("[*" + rangoSalida[bytesHash[i]] + "*]");
-              System.out.print(rangoSalida[bytesHash[i]]);
+            // System.out.print("[*" + rangoSalida[bytesHash[i]] + "*]");
+            System.out.print(rangoSalida[bytesHash[i]]);
+        }*/
+    }
+
+    public void ConvertirPosicionACaracter() {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < bytesHash.length; i++) {
+            result.append(rangoSalida[bytesHash[i]]);
         }
+        // Convertir StringBuilder a String final
+        charHash = result.toString();
+        System.out.println(charHash);
     }
 
     public void Hashpaso1() {//Hecho yo y el profe
@@ -224,21 +223,22 @@ public class OperacionesCifradosHash {
         //paso 1
         //xor entre todos los bytes del hash
         //iniciar la variable xor con la longitud del contenido.
-        byte resultado1 = (byte) (bytesHash.length/2);//Dividimos entre 2
+        byte resultado1 = (byte) (bytesHash.length / 2);//Dividimos entre 2
         //Recorrer todo el hash.
         for (int j = 0; j < bytesHash.length; j++) {
             //Ejecutar xor entre el valor de lo que vale xor1 en un momento dado y el valor del byte actual del hash más el valor del indice actual.
-            resultado1 = (byte) (resultado1 ^ (bytesHash[j]) + 2*j );//Multiplicamos por 30 adicional y quitamos a J
+            resultado1 = (byte) (resultado1 ^ (bytesHash[j]) + 2 * j);//Multiplicamos por 30 adicional y quitamos a J
             //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
             bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(resultado1) % rangoSalida.length];
             //System.out.print("[*" + bytesHash[j] + "*]");
+
         }
     }
 
     public void Hashpasoprueba() {//Hecho profe RECORRE EL ARCHIVO
 
-        for (int i = 0; i < datos.length; i++) {//Sacar byte por byte del archivo
-            byte resultado2 = datos[i];
+        for (int i = 0; i < bytesOriginales.size(); i++) {//Sacar byte por byte del archivo
+            byte resultado2 = bytesOriginales.get(i);
             //Recorrer todo el arreglo de hash.
             for (int j = 0; j < bytesHash.length; j++) {
                 //Ejecutar xor entre el valor de lo que vale xor1 en un momento dado y el valor del byte actual del hash más el valor del indice actual.
@@ -252,8 +252,8 @@ public class OperacionesCifradosHash {
 
     public void Hashpaso2() {//Hecho chat yo y profe recorre el archivo
         //Sacar byte por byte del archivo
-        for (int i = 0; i < datos.length; i++) {
-            byte resultado2 = datos[i];
+        for (int i = 0; i < bytesOriginales.size(); i++) {
+            byte resultado2 = bytesOriginales.get(i);
             //Recorrer todo el arreglo de hash.
             for (int j = 0; j < bytesHash.length; j++) {
                 bytesHash[j] = (byte) ((bytesHash[j] + resultado2) % 256);
@@ -265,14 +265,15 @@ public class OperacionesCifradosHash {
     }
 
     public void Hashpaso3() {//SIN RECORRER EL ARCHIVO
-        // Paso 3: Multiplicación y XOR acumulativo
+
         byte numrandom = 7; // Número arbitrario para la mezcla
         //Recorrer todo el arreglo de hash.
         for (int j = 0; j < bytesHash.length; j++) {
             bytesHash[j] = (byte) ((bytesHash[j] * 17) ^ numrandom);
-            numrandom = bytesHash[j]; // Acumulación de valores XOR
+            numrandom = bytesHash[j];
             //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
             bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(bytesHash[j]) % rangoSalida.length];
+
         }
 
     }
@@ -280,8 +281,8 @@ public class OperacionesCifradosHash {
     public void Hashpaso4() {//RECORRE EL ARCHIVO
 
         int sum = 0;
-        for (int i = 0; i < datos.length; i++) {
-            sum += datos[i] * (i + 1); // Suma ponderada
+        for (int i = 0; i < bytesOriginales.size(); i++) {
+            sum += bytesOriginales.get(i) * (i + 1); // Suma ponderada
             for (int j = 0; j < bytesHash.length; j++) {
                 bytesHash[j] = (byte) ((bytesHash[j] ^ sum) % rangoSalida.length);
             }
@@ -294,7 +295,7 @@ public class OperacionesCifradosHash {
     //Propósito: Introducir variabilidad en cada byte del hash basándose en su posición.
     public void Hashpaso5() {//NO RECORRE EL ARCHIVO
         for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] + datos[j % datos.length] + j) % rangoSalida.length);
+            bytesHash[j] = (byte) ((bytesHash[j] + bytesOriginales.get(j % bytesOriginales.size()) + j) % rangoSalida.length);
         }
     }
 
@@ -305,6 +306,7 @@ public class OperacionesCifradosHash {
         for (int j = 0; j < bytesHash.length; j++) {
             if (j % 2 == 0) {
                 bytesHash[j] = (byte) ((bytesHash[j] | j) % rangoSalida.length);
+
             } else {
                 bytesHash[j] = (byte) ((bytesHash[j] ^ j) % rangoSalida.length);
             }
