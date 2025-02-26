@@ -169,7 +169,7 @@ public class MostrarArchivo {
                         asciiData[fila][columna] = Integer.toString(valor);
                     } else {
                         // Si es un valor ASCII imprimible, lo convertimos a char
-                        asciiData[fila][columna] = (valor >= 32 && valor <= 126) ? Character.toString((char) valor) : Integer.toString(valor);
+                        asciiData[fila][columna] = (valor >= 32 && valor <= 255) ? Character.toString((char) valor) : Integer.toString(valor);
                     }
 
                     // En la tabla hexadecimal, todos los valores se representan en formato HEX

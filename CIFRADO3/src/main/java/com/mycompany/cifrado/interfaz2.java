@@ -37,13 +37,12 @@ public class interfaz2 extends javax.swing.JFrame {
     MostrarArchivo archivonormal = new MostrarArchivo();//Usar los metodos para que pueda usar los bytes que se han mostrado 
     MostrarArchivo archivonormalhash = new MostrarArchivo();//Usar los metodos para que pueda usar los bytes que se han mostrado 
 
-
     /**
      * Creates new form interfaz2
      */
     public interfaz2() {
         initComponents();
-         //COMPORTAMIENTO TABLAS ARCHIVO
+        //COMPORTAMIENTO TABLAS ARCHIVO
         inicializarcomportamientoarchivo = new ComportamientoDeTablas(tableASCII,
                 tableHex,
                 spinnerSeleccion,
@@ -1227,7 +1226,7 @@ public class interfaz2 extends javax.swing.JFrame {
 
     private void jButtonAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAbrirActionPerformed
         // TODO add your handling code here:
-           JFileChooser fileChooser = new JFileChooser(); //Crea un cuadro de diálogo para seleccionar archivos.
+        JFileChooser fileChooser = new JFileChooser(); //Crea un cuadro de diálogo para seleccionar archivos.
         int resultado = fileChooser.showOpenDialog(this);//Muestra el cuadro de diálogo para abrir un archivo.
         if (resultado == JFileChooser.APPROVE_OPTION) {//Verifica si el usuario seleccionó un archivo correctamente
             // Obtener la ruta del archivo seleccionado
@@ -1236,23 +1235,26 @@ public class interfaz2 extends javax.swing.JFrame {
             jTextFielddireccion.setText(ruta);//Pone la direccion del archivo en el JtextField
             abrir.procesarArchivo(archivo);//Procesa el archivo para sacar los bytes y ponerlos en arreglos bidimensionales para ascii y hexadecimal
 
-    }                                            
-        byteList = abrir.getByteList(); //Obtiene la lista de bytes que fueron tomados del archivo
-        totalBytes = abrir.getTotalBytes();
+        }
+        byteList = abrir.convertirAArrayList(abrir.getAsciiData()); //Obtiene la lista de bytes que fueron tomados del archivo
+        totalBytes = abrir.convertirAArrayList(abrir.getAsciiData()).size();
 
+        //byteList = abrir.getByteList(); //Obtiene la lista de bytes que fueron tomados del archivo
+        //totalBytes = abrir.getTotalBytes();
         inicializarcomportamientoarchivo.setByteList(byteList); //Se ocupa para poner para que el comportamiento de ver bytes de archivo funcione
         inicializarcomportamientoarchivo.setTotalBytes(totalBytes); //Se ocupa para poner para que el comportamiento de ver bytes de archivo funcione
+        abrir.setTotalBytes(abrir.getX());
 
         inicializartablas(txtTotalBytes, spinnerSeleccion, tableASCII, tableHex, abrir);//Inicializa la tabla para mostrar los archivos
-   
+
     }//GEN-LAST:event_jButtonAbrirActionPerformed
-   public void inicializartablas(JTextField txtTotalBytes, JSpinner spinnerSeleccion, JTable tableASCII, JTable tableHex, MostrarArchivo abrir) {//Metodo para inicializar las tablas ya sea con los bytes del archivo o con los bytes de cifrado o descifrado 
+    public void inicializartablas(JTextField txtTotalBytes, JSpinner spinnerSeleccion, JTable tableASCII, JTable tableHex, MostrarArchivo abrir) {//Metodo para inicializar las tablas ya sea con los bytes del archivo o con los bytes de cifrado o descifrado 
 
         txtTotalBytes.setText(String.valueOf(abrir.getTotalBytes()));
         // Ajustar el Spinner al rango correcto
-       System.out.println("X: ->"+archivonormal.getTotalBytes());
+        System.out.println("X: ->" + archivonormal.getTotalBytes());
         spinnerSeleccion.setModel(new SpinnerNumberModel(0, 0, abrir.getTotalBytes() - 1, 1));
-       
+
         // Limpiar los modelos antes de insertar nuevos datos
         tableASCII.setModel(new DefaultTableModel());  // Vacía la tabla
         tableHex.setModel(new DefaultTableModel());    // Vacía la tabla
@@ -1267,13 +1269,11 @@ public class interfaz2 extends javax.swing.JFrame {
 
     private void btnCifrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCifrarActionPerformed
 
-    
         try {
             // Se necesita para que procese el archivo y funcione los metodos
 //           archivonormal.procesarArchivo(archivo);
             //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
             archivonormal.setByteList(byteList);
-            archivonormal.setTotalBytes(totalBytes);
 
             //Verifica que la contraseña no este vacia
             //Lee el archivo y saca los bytes de la contraseña
@@ -1281,10 +1281,15 @@ public class interfaz2 extends javax.swing.JFrame {
             metodosarchivo.cifrarArchivo(ruta, txtPassword.getText(), this); //Cifra el archivo con los bytes que contiene y la contraseña
             //Devuelve la lista de bytes ya cifrados y se los da a mostrarDatosEnTablas
             //para que pueda acomodarlos en los arreglos bidimensionales que iran en las tablas correspondientes de cifrado
-            archivonormal.mostrarDatosEnTablas(metodosarchivo.getEncryptedBytes());
+            archivonormal.convertirAFormatoTabla(metodosarchivo.getEncryptedBytes(), 11);
             //Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
-            inicializarcomportamientocifrado.setByteList(metodosarchivo.getEncryptedBytes());
-            inicializarcomportamientocifrado.setTotalBytes(totalBytes);
+
+            inicializarcomportamientocifrado.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));
+            inicializarcomportamientocifrado.setTotalBytes(archivonormal.convertirAArrayList(archivonormal.getAsciiData()).size());
+
+            archivonormal.setTotalBytes(archivonormal.getX());
+            //inicializarcomportamientocifrado.setByteList(metodosarchivo.getEncryptedBytes());
+            //inicializarcomportamientocifrado.setTotalBytes(totalBytes);
             //Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
             //para que use los getters dentro de inicializar las tablas y pueda obtener los arreglos bidimensionales de los 
             //bytes cifrados y puedan mostrarse en tablas
@@ -1292,7 +1297,7 @@ public class interfaz2 extends javax.swing.JFrame {
         } catch (IOException ex) {
             Logger.getLogger(interfaz2.class.getName()).log(Level.SEVERE, null, ex);
         }
-   
+
     }//GEN-LAST:event_btnCifrarActionPerformed
 
     private void Guardar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Guardar1ActionPerformed
@@ -1302,36 +1307,34 @@ public class interfaz2 extends javax.swing.JFrame {
 
     private void btnDescifrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar1ActionPerformed
 
-
         //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
         archivonormal.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));
-       
-       
-// TODO add your handling code here:
+
+        // TODO add your handling code here:
         metodosarchivo.DescifrarBytes(metodosarchivo.getEncryptedBytes(), txtPassword1.getText());
-// listatitulos
-//ArrayList<Byte> byteList
-//convertirAArrayList(ascii y hex)
+        // listatitulos
+        //ArrayList<Byte> byteList
+        //convertirAArrayList(ascii y hex)
         //  archivonormal.mostrarDatosEnTablas(metodosarchivo.getBytesOriginales());
         archivonormal.convertirAFormatoTabla(metodosarchivo.getDesencryptedBytes(), 11);
-//Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
+        //Le doy el arreglo de bytes ya cifrados tomados en el archivo y la longitud
         inicializarcomportamientodescifrado.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));//Convierte el ascii[][] a un arraylist
         inicializarcomportamientodescifrado.setTotalBytes(archivonormal.convertirAArrayList(archivonormal.getAsciiData()).size());
-//Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
+        //Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
         //para que use los getters dentro de inicializar las tablas y pueda obtener los arreglos bidimensionales de los 
         //bytes cifrados y puedan mostrarse en tablas
-         archivonormal.setTotalBytes(archivonormal.getX());//Para darle la longitud al spinner
+        archivonormal.setTotalBytes(archivonormal.getX());//Para darle la longitud al spinner
         inicializartablas(txtTotalBytes2,
                 spinnerSeleccion2,
                 tableASCII2,
                 tableHex2,
                 archivonormal);
-           
+
     }//GEN-LAST:event_btnDescifrar1ActionPerformed
 
     private void CalcularHashActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CalcularHashActionPerformed
         // TODO add your handling code here:
-                // TODO add your handling code here:
+        // TODO add your handling code here:
         // Se necesita para que procese el archivo y funcione los metodos
         //SIENTO QUE NO ES NECESARIO YA QUE ARRIBA YA LOS INICIALICE
         //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
@@ -1350,19 +1353,23 @@ public class interfaz2 extends javax.swing.JFrame {
         for (byte b : arregloBytes) {
             listaBytes.add(b);
         }
-
+        archivonormalhash.convertirAFormatoTabla(listaBytes, 11);
         // archivonormalhash.setAsciiData(archivonormalhash.reemplazarValores(archivonormalhash.getAsciiData()));
 // Convertir char[] a String y concatenar
         txtPassword2.setText(metodosarchivo.getCharHash());
-        inicializarcomportamientodehash.setByteList(listaBytes);//Para ponerlos en textfield
-        inicializarcomportamientodehash.setTotalBytes(listaBytes.size());
-        archivonormalhash.convertirAFormatoTabla(listaBytes, 11);
+        inicializarcomportamientodehash.setByteList(archivonormalhash.convertirAArrayList(archivonormalhash.getAsciiData()));//Para ponerlos en textfield
+        inicializarcomportamientodehash.setTotalBytes(archivonormalhash.convertirAArrayList(archivonormalhash.getAsciiData()).size());
+
+        
+       // inicializarcomportamientodehash.setByteList(listaBytes);//Para ponerlos en textfield
+       // inicializarcomportamientodehash.setTotalBytes(listaBytes.size());
+
         inicializartablas(txtTotalBytes3,
                 spinnerSeleccion3,
                 tableASCII3,
                 tableHex3,
                 archivonormalhash);
-    
+
     }//GEN-LAST:event_CalcularHashActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
