@@ -34,8 +34,24 @@ public class ComportamientoDeTablas {
     JSpinner spinnerSeleccion;
     JTextField txtAsciiValue, txtHexValue;
     String[] columnNames;
+    String[][] asciiData, hexData;//para manejar los datos dentro de la tabla
+    int fila, columna; //Fila y columna seleccionadas en ese momento
 
-   
+    public String[][] getAsciiData() {
+        return asciiData;
+    }
+
+    public void setAsciiData(String[][] asciiData) {
+        this.asciiData = asciiData;
+    }
+
+    public String[][] getHexData() {
+        return hexData;
+    }
+
+    public void setHexData(String[][] hexData) {
+        this.hexData = hexData;
+    }
 
     public ComportamientoDeTablas(JTable tableASCII, JTable tableHex, JSpinner spinnerSeleccion, JTextField txtAsciiValue, JTextField txtHexValue, String[] columnNames) {
         this.tableASCII = tableASCII;
@@ -144,20 +160,21 @@ public class ComportamientoDeTablas {
             @Override
             public void mouseClicked(MouseEvent e) {
                 JTable sourceTable = (JTable) e.getSource();
-                int fila = sourceTable.getSelectedRow();
-                int columna = sourceTable.getSelectedColumn();
+                fila = sourceTable.getSelectedRow();
+                columna = sourceTable.getSelectedColumn();
 
                 if (fila != -1 && columna != -1) {
                     int index = fila * 11 + columna;
                     if (index < totalBytes) {
                         // Actualizar el Spinner
                         spinnerSeleccion.setValue(index);
+                        // Cambiar el valor en la fila 1, columna 2 (índices empiezan en 0)
 
                         // Actualizar los valores en los JTextField
                         byte selectedByte = byteList.get(index);
                         txtAsciiValue.setText(String.valueOf((char) selectedByte));
                         txtHexValue.setText(String.format("%02X", selectedByte));
-
+                        System.out.println("LLEGUE: ");
                         // Sincronizar la selección con la otra tabla
                         JTable targetTable = (sourceTable == tableASCII) ? tableHex : tableASCII;
                         targetTable.changeSelection(fila, columna, false, false);
@@ -168,6 +185,39 @@ public class ComportamientoDeTablas {
 
         tableASCII.addMouseListener(listener);
         tableHex.addMouseListener(listener);
+    }
+
+    public void editarTablas(JTextField asciivalue, JTextField hexvalue) {
+        if (fila != -1 && columna != -1) {
+            int index = fila * 11 + columna;
+            if (index < totalBytes) {
+                // Actualizar el Spinner
+                //spinnerSeleccion.setValue(index);
+                byte selectedByte = byteList.get(index);
+                String selectedByteHex = String.format("%02X", selectedByte);
+                if (selectedByte != (byte) asciivalue.getText().charAt(0)) {
+                    String x = String.format("%02X", (byte) asciivalue.getText().charAt(0));//Caracter de la caja de text en hexadecimal
+                    tableASCII.setValueAt(asciivalue.getText(), fila, columna);
+                    tableHex.setValueAt(x, fila, columna);
+                    hexvalue.setText(x);
+                    asciiData[fila][columna] = asciivalue.getText();//Poner los datos modificados en el arreglo bidimensional que se pone en el JTabler
+                    hexData[fila][columna] = x;
+                } else if (selectedByteHex == null ? hexvalue.getText() != null : !selectedByteHex.equals(hexvalue.getText())) {
+                    String hex = hexvalue.getText(); // Representa 'A' en ASCII (65 en decimal)
+                    int decimal = Integer.parseInt(hex, 16); // Convierte de hex a decimal
+                    char asciiChar = (char) decimal; // Convierte de int a char
+                    tableHex.setValueAt(hex, fila, columna);//Poner el dato en la tabla en la celda en especificai
+                    tableASCII.setValueAt(asciiChar, fila, columna);//Poner el dato en la tabla en la celda en especificai
+                    asciivalue.setText("" + asciiChar);
+                    asciiData[fila][columna] = ""+asciiChar;//Poner los datos modificados en el arreglo bidimensional que se pone en el JTabler
+                    hexData[fila][columna] = hex;
+                }
+                // Actualizar los valores en los JTextField
+                // txtAsciiValue.setText(tableASCII.get);
+                // txtHexValue.setText(String.format("%02X", selectedByte));
+            }
+        }
+
     }
 
     public void configurarTablas() {//Metodo para inializar la tabla
@@ -209,7 +259,7 @@ public class ComportamientoDeTablas {
         tableHex.addMouseListener(sincronizadorColor);
     }
 
-    public void guardarArchivo(JFrame ventanaprincipal,  ArrayList<Byte> bytesCifrados) {
+    public void guardarArchivo(JFrame ventanaprincipal, ArrayList<Byte> bytesCifrados) {
         JFileChooser fileChooser = new JFileChooser();// Abre una ventana para elegir dónde guardar el archivo.
         fileChooser.setDialogTitle("Guardar Archivo Cifrado");//Titulo del explorador de archivos
 
@@ -220,7 +270,6 @@ public class ComportamientoDeTablas {
 
             try ( FileOutputStream fos = new FileOutputStream(fileToSave)) {
                 // Suponiendo que tienes los bytes cifrados en un ArrayList<Byte>
-              
 
                 // Convertir ArrayList<Byte> a byte[]
                 byte[] byteArray = new byte[bytesCifrados.size()];

@@ -41,6 +41,7 @@ public class interfaz2 extends javax.swing.JFrame {
      * Creates new form interfaz2
      */
     public interfaz2() {
+        Tablas tabla= new Tablas();
         initComponents();
         //COMPORTAMIENTO TABLAS ARCHIVO
         inicializarcomportamientoarchivo = new ComportamientoDeTablas(tableASCII,
@@ -76,7 +77,8 @@ public class interfaz2 extends javax.swing.JFrame {
         inicializarcomportamientodescifrado.sincronizarColores();
 
         //COMPORTAMIENTO TABLAS HASH
-        inicializarcomportamientodehash = new ComportamientoDeTablas(tableASCII2,
+        inicializarcomportamientodehash = new ComportamientoDeTablas(
+                tableASCII3,
                 tableHex3,
                 spinnerSeleccion3,
                 txtAsciiValue3,
@@ -213,6 +215,8 @@ public class interfaz2 extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(0, 153, 204));
+        setResizable(false);
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
 
         PanelPrincipal.setBackground(new java.awt.Color(236, 240, 241));
         PanelPrincipal.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(153, 204, 255), 15, true));
@@ -360,11 +364,11 @@ public class interfaz2 extends javax.swing.JFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
             .addGroup(panelTablasLayout.createSequentialGroup()
-                .addGap(97, 97, 97)
+                .addGap(166, 166, 166)
                 .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(183, 183, 183))
+                .addGap(135, 135, 135))
         );
         panelTablasLayout.setVerticalGroup(
             panelTablasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -404,7 +408,7 @@ public class interfaz2 extends javax.swing.JFrame {
             .addGroup(panelArchivoOriginalLayout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addComponent(jLabel19)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panelTablas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -434,8 +438,8 @@ public class interfaz2 extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, PanelArchivoLayout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextFielddireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(95, 95, 95)
+                        .addComponent(jTextFielddireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jButtonAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(34, 34, 34))))
         );
@@ -467,7 +471,7 @@ public class interfaz2 extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelArchivoAbiertoLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel14)
-                .addGap(306, 306, 306))
+                .addGap(309, 309, 309))
         );
         panelArchivoAbiertoLayout.setVerticalGroup(
             panelArchivoAbiertoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1118,7 +1122,7 @@ public class interfaz2 extends javax.swing.JFrame {
                     .addGroup(panelOperacionesLayout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addComponent(jTabbedPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelOperacionesLayout.setVerticalGroup(
             panelOperacionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1145,6 +1149,11 @@ public class interfaz2 extends javax.swing.JFrame {
         btnLimpiar.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         btnLimpiar.setForeground(new java.awt.Color(255, 255, 255));
         btnLimpiar.setText("LIMPIAR LOG.");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PanelBitacoraLayout = new javax.swing.GroupLayout(PanelBitacora);
         PanelBitacora.setLayout(PanelBitacoraLayout);
@@ -1185,12 +1194,13 @@ public class interfaz2 extends javax.swing.JFrame {
                         .addGap(21, 21, 21)
                         .addGroup(PanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(PanelBitacora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(panelOperaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(panelArchivoAbierto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(PanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(panelOperaciones, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(panelArchivoAbierto, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(PanelPrincipalLayout.createSequentialGroup()
                         .addGap(52, 52, 52)
                         .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 820, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGap(0, 12, Short.MAX_VALUE))
         );
         PanelPrincipalLayout.setVerticalGroup(
             PanelPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1203,23 +1213,12 @@ public class interfaz2 extends javax.swing.JFrame {
                 .addComponent(panelOperaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(PanelBitacora, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         ScrollPanePrincipal.setViewportView(PanelPrincipal);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ScrollPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 972, javax.swing.GroupLayout.PREFERRED_SIZE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(ScrollPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 1012, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        getContentPane().add(ScrollPanePrincipal);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1234,7 +1233,7 @@ public class interfaz2 extends javax.swing.JFrame {
             ruta = archivo.getAbsolutePath();
             jTextFielddireccion.setText(ruta);//Pone la direccion del archivo en el JtextField
             abrir.procesarArchivo(archivo);//Procesa el archivo para sacar los bytes y ponerlos en arreglos bidimensionales para ascii y hexadecimal
-
+             metodosarchivo.agregarLog(txtAreaBitacora, "NUEVO ARCHIVO ABIERTO....");
         }
         byteList = abrir.convertirAArrayList(abrir.getAsciiData()); //Obtiene la lista de bytes que fueron tomados del archivo
         totalBytes = abrir.convertirAArrayList(abrir.getAsciiData()).size();
@@ -1243,10 +1242,9 @@ public class interfaz2 extends javax.swing.JFrame {
         //totalBytes = abrir.getTotalBytes();
         inicializarcomportamientoarchivo.setByteList(byteList); //Se ocupa para poner para que el comportamiento de ver bytes de archivo funcione
         inicializarcomportamientoarchivo.setTotalBytes(totalBytes); //Se ocupa para poner para que el comportamiento de ver bytes de archivo funcione
-        abrir.setTotalBytes(abrir.getX());
+        abrir.setTotalBytes(abrir.getX());//Total de bytes para recorrer toda la tabla
 
         inicializartablas(txtTotalBytes, spinnerSeleccion, tableASCII, tableHex, abrir);//Inicializa la tabla para mostrar los archivos
-
     }//GEN-LAST:event_jButtonAbrirActionPerformed
     public void inicializartablas(JTextField txtTotalBytes, JSpinner spinnerSeleccion, JTable tableASCII, JTable tableHex, MostrarArchivo abrir) {//Metodo para inicializar las tablas ya sea con los bytes del archivo o con los bytes de cifrado o descifrado 
 
@@ -1270,11 +1268,15 @@ public class interfaz2 extends javax.swing.JFrame {
     private void btnCifrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCifrarActionPerformed
 
         try {
+          //  txtAreaBitacora.setText("");
+            //metodosarchivo.agregarLog(txtAreaBitacora, "CIFRANDO ARCHIVO....");
+    
             // Se necesita para que procese el archivo y funcione los metodos
 //           archivonormal.procesarArchivo(archivo);
             //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
             archivonormal.setByteList(byteList);
-
+            
+            metodosarchivo.setMensajelog(txtAreaBitacora);//Poner los mensajes 
             //Verifica que la contraseña no este vacia
             //Lee el archivo y saca los bytes de la contraseña
             //cifra con los 9 pasos 
@@ -1288,6 +1290,7 @@ public class interfaz2 extends javax.swing.JFrame {
             inicializarcomportamientocifrado.setTotalBytes(archivonormal.convertirAArrayList(archivonormal.getAsciiData()).size());
 
             archivonormal.setTotalBytes(archivonormal.getX());
+
             //inicializarcomportamientocifrado.setByteList(metodosarchivo.getEncryptedBytes());
             //inicializarcomportamientocifrado.setTotalBytes(totalBytes);
             //Le doy el objeto que ya ha sido inicializado y ya se hayan obtenido los arreglos bidimensionales
@@ -1306,6 +1309,7 @@ public class interfaz2 extends javax.swing.JFrame {
     }//GEN-LAST:event_Guardar1ActionPerformed
 
     private void btnDescifrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar1ActionPerformed
+       
 
         //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
         archivonormal.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));
@@ -1355,15 +1359,13 @@ public class interfaz2 extends javax.swing.JFrame {
         }
         archivonormalhash.convertirAFormatoTabla(listaBytes, 11);
         // archivonormalhash.setAsciiData(archivonormalhash.reemplazarValores(archivonormalhash.getAsciiData()));
-// Convertir char[] a String y concatenar
+        // Convertir char[] a String y concatenar
         txtPassword2.setText(metodosarchivo.getCharHash());
         inicializarcomportamientodehash.setByteList(archivonormalhash.convertirAArrayList(archivonormalhash.getAsciiData()));//Para ponerlos en textfield
         inicializarcomportamientodehash.setTotalBytes(archivonormalhash.convertirAArrayList(archivonormalhash.getAsciiData()).size());
-
-        
-       // inicializarcomportamientodehash.setByteList(listaBytes);//Para ponerlos en textfield
-       // inicializarcomportamientodehash.setTotalBytes(listaBytes.size());
-
+        archivonormalhash.setTotalBytes(archivonormalhash.getX());
+        // inicializarcomportamientodehash.setByteList(listaBytes);//Para ponerlos en textfield
+        // inicializarcomportamientodehash.setTotalBytes(listaBytes.size());
         inicializartablas(txtTotalBytes3,
                 spinnerSeleccion3,
                 tableASCII3,
@@ -1378,7 +1380,20 @@ public class interfaz2 extends javax.swing.JFrame {
 
     private void btnEditarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarArchivoActionPerformed
         // TODO add your handling code here:
+        inicializarcomportamientoarchivo.setAsciiData(abrir.getAsciiData());
+        inicializarcomportamientoarchivo.setHexData(abrir.getHexData());
+        inicializarcomportamientoarchivo.editarTablas(txtAsciiValue, txtHexValue);
+        byteList = abrir.convertirAArrayList(abrir.getAsciiData());
+        inicializarcomportamientoarchivo.setByteList(byteList);
+        //Repintamos las tablas modificadas
+        tableASCII.setModel(new DefaultTableModel(inicializarcomportamientoarchivo.getAsciiData(), columnNames));
+        tableHex.setModel(new DefaultTableModel(inicializarcomportamientoarchivo.getHexData(), columnNames));
     }//GEN-LAST:event_btnEditarArchivoActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        // TODO add your handling code here:
+        txtAreaBitacora.setText("");
+    }//GEN-LAST:event_btnLimpiarActionPerformed
 
     /**
      * @param args the command line arguments

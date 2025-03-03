@@ -7,10 +7,13 @@ package com.mycompany.cifrado;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 /**
  *
@@ -23,6 +26,15 @@ public class OperacionesCifradosHash {
     byte[] bytesHash = new byte[10]; // Salida de 10 caracteres
     // ArrayList <<datos = "Hola Mundo, esto es una rueba de hash".getBytes();//Mensaje del archivo
     String charHash = "";//Para recibir los caracteres imprimibles en el textfield
+    JTextArea mensajelog = new JTextArea();
+
+    public JTextArea getMensajelog() {
+        return mensajelog;
+    }
+
+    public void setMensajelog(JTextArea mensajelog) {
+        this.mensajelog = mensajelog;
+    }
 
     public ArrayList<Byte> getDesencryptedBytes() {
         return DesencryptedBytes;
@@ -89,23 +101,32 @@ public class OperacionesCifradosHash {
 
     public ArrayList<Byte> cifrarBytes(byte[] datos, String contraseña) {
         ArrayList<Byte> result = new ArrayList<>();
-
+        agregarLog(mensajelog, "CIFRANDO ARCHIVO....");
         int[] claves = generarClaves(contraseña);
         byte[] resultado = new byte[datos.length];
 
         for (int i = 0; i < datos.length; i++) {
             byte b = datos[i];
-
+            mensajelog.append("\n Revisado-> " + i + " Byte original: " + b + " ('" + (char) b + "')" + "\n");
             // Pasos de cifrado (9 operaciones)
             b = (byte) (b ^ claves[0]);
+            mensajelog.append("Paso 1 XOR: " + b + "\n");
             b = (byte) ((b + claves[1]) % 256);
+            mensajelog.append("Paso 2 Suma: " + b + "\n");
             b = rotarIzquierda(b, 3);
+            mensajelog.append("Paso 3 Rotación Izquierda: " + b + "\n");
             b = (byte) ((b * claves[2]) % 256);
+            mensajelog.append("Paso 4 Multiplicación: " + b + "\n");
             b = (byte) ((b - claves[3] + 256) % 256);
+            mensajelog.append("Paso 5 Resta: " + b + "\n");
             b = (byte) (b ^ claves[4]);
+            mensajelog.append("Paso 6 XOR: " + b + "\n");
             b = rotarDerecha(b, 2);
+            mensajelog.append("Paso 7 Rotación Derecha: " + b + "\n");
             b = (byte) ((b + claves[5]) % 256);
+            mensajelog.append("Paso 8 Suma: " + b + "\n");
             b = (byte) (b ^ claves[6]);
+            mensajelog.append("Paso 9 XOR Final: " + b + "\n");
             resultado[i] = b;
         }
 
@@ -155,27 +176,35 @@ public class OperacionesCifradosHash {
         }
         return 1;
     }
-    
 
     public ArrayList<Byte> DescifrarBytes(ArrayList<Byte> bytesCifrados, String password) {
         ArrayList<Byte> result = new ArrayList<>();
-
+        agregarLog(mensajelog, "DESCIFRANDO ARCHIVO....");
         int[] claves = generarClaves(password);
         byte[] resultado = new byte[bytesCifrados.size()];
-
+        mensajelog.setText("");
         for (int i = 0; i < bytesCifrados.size(); i++) {
             byte b = bytesCifrados.get(i);
-
+            mensajelog.append("\n Revisado-> " + i + " Byte cifrado: " + b + "\n");
             // Pasos inversos de descifrado
             b = (byte) (b ^ claves[6]);
+            mensajelog.append("Paso 1 XOR: " + b + "\n");
             b = (byte) ((b - claves[5] + 256) % 256);
+            mensajelog.append("Paso 2 Resta: " + b + "\n");
             b = rotarIzquierda(b, 2);
+            mensajelog.append("Paso 3 Rotación Izquierda: " + b + "\n");
             b = (byte) (b ^ claves[4]);
+            mensajelog.append("Paso 4 XOR: " + b + "\n");
             b = (byte) ((b + claves[3]) % 256);
+            mensajelog.append("Paso 5 Suma: " + b + "\n");
             b = (byte) ((b * inversoModular(claves[2])) % 256);
+            mensajelog.append("Paso 6 Multiplicación Inversa: " + b + "\n");
             b = rotarDerecha(b, 3);
+            mensajelog.append("Paso 7 Rotación Derecha: " + b + "\n");
             b = (byte) ((b - claves[1] + 256) % 256);
+            mensajelog.append("Paso 8 Resta: " + b + "\n");
             b = (byte) (b ^ claves[0]);
+            mensajelog.append("Paso 9 XOR Final byte descifrado: " + b + " ('" + (char) b + "')" + "\n");
             resultado[i] = b;
         }
         // Convertir el arreglo a ArrayList
@@ -192,19 +221,37 @@ public class OperacionesCifradosHash {
     }
 
     public void generarHashNuevo() {
+
         bytesHash = new byte[10];
+        agregarLog(mensajelog, "GENERANDO HASH....");
         Hashpaso1();
         Hashpaso2();
         Hashpaso3();
         Hashpaso4();
         Hashpaso5();
         Hashpaso6();
+        normalizarBytes();
         ConvertirPosicionACaracter();
         /*
         for (int i = 0; i < bytesHash.length; i++) {
             // System.out.print("[*" + rangoSalida[bytesHash[i]] + "*]");
             System.out.print(rangoSalida[bytesHash[i]]);
         }*/
+    }
+
+    public void agregarLog(JTextArea bitacora, String mensaje) {
+        // Obtener la fecha y hora actual
+        LocalDateTime ahora = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // Agregar el mensaje con fecha y hora al JTextArea
+        bitacora.append("[" + ahora.format(formato) + "] " + mensaje + "\n");
+    }
+
+    public void normalizarBytes() {
+        for (int i = 0; i < bytesHash.length; i++) {
+            bytesHash[i] = (byte) (bytesHash[i] & 0xFF); // Convierte a rango 0-255
+        }
     }
 
     public void ConvertirPosicionACaracter() {
@@ -215,10 +262,82 @@ public class OperacionesCifradosHash {
         }
         // Convertir StringBuilder a String final
         charHash = result.toString();
-        System.out.println(charHash);
+        //System.out.println(charHash);
+         mensajelog.append("\n");
+        agregarLog(mensajelog, "Hash generado: " + charHash);
     }
 
-    public void Hashpaso1() {//Hecho yo y el profe
+    public void Hashpaso1() { // RECORRE EL ARCHIVO
+
+      
+        mensajelog.append("\n");
+        agregarLog(mensajelog, "Paso 1 - Suma ponderada aplicada.");
+        int sum = 0;
+
+        for (int i = 0; i < bytesOriginales.size(); i++) {
+            sum = (sum + bytesOriginales.get(i) * (i + 1)) % 256; // Evitar desbordamientos
+
+            // Usamos `i` para hacer variaciones en la aplicación de sum a bytesHash
+            for (int j = 0; j < bytesHash.length; j++) {
+                bytesHash[j] ^= (byte) ((sum + j * i) % 256); // Variar más la operación
+            }
+        }
+
+        //  System.out.println("---1---");
+        for (int i = 0; i < bytesHash.length; i++) {
+            //System.out.print("[" + (bytesHash[i] & 0xFF) + "]"); // Evita negativos al imprimir
+             mensajelog.append("[" + bytesHash[i] + "]");
+        }
+          mensajelog.append("\n");
+        //System.out.println("-------");*/
+
+    }
+
+    public void Hashpaso2() {//Hecho chat yo y profe recorre el archivo
+        //Sacar byte por byte del archivo
+        mensajelog.append("\n");
+        agregarLog(mensajelog, "Paso 2 - Modificación de Hash con datos originales completada.");
+        byte resultado2 = (byte) bytesOriginales.size();
+        //Recorrer todo el arreglo de hash.
+        for (int j = 0; j < bytesHash.length; j++) {
+            bytesHash[j] = (byte) ((bytesHash[j] + resultado2) % 256);
+            //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
+            bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(bytesHash[j]) % rangoSalida.length];
+        }
+        //System.out.println("---2---");
+        for (int i = 0; i < bytesHash.length; i++) {
+            //System.out.print("[" + bytesHash[i] + "]");
+             mensajelog.append("[" + bytesHash[i] + "]");
+        }
+          mensajelog.append("\n");
+        //System.out.println("-------");*/
+
+    }
+
+    public void Hashpaso3() {//SIN RECORRER EL ARCHIVO
+        mensajelog.append("\n");
+        agregarLog(mensajelog, "Paso 3 - Mezcla aleatoria aplicada.");
+        byte numrandom = 7; // Número arbitrario para la mezcla
+        //Recorrer todo el arreglo de hash.
+        for (int j = 0; j < bytesHash.length; j++) {
+            bytesHash[j] = (byte) ((bytesHash[j] * 17) ^ numrandom);
+            numrandom = bytesHash[j];
+            //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
+            bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(bytesHash[j]) % rangoSalida.length];
+        }
+
+        //System.out.println("---3---");
+        for (int i = 0; i < bytesHash.length; i++) {
+            // System.out.print("[" + bytesHash[i] + "]");
+            mensajelog.append("[" + bytesHash[i] + "]");
+        }
+          mensajelog.append("\n");
+        //System.out.println("-------");
+    }
+
+    public void Hashpaso4() {//Hecho yo y el profe
+        mensajelog.append("\n");
+        agregarLog(mensajelog, "Paso 4- Aplicando operaciones suma, AND, multiplicacion ");
 
         //paso 1
         //xor entre todos los bytes del hash
@@ -231,86 +350,54 @@ public class OperacionesCifradosHash {
             //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
             bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(resultado1) % rangoSalida.length];
             //System.out.print("[*" + bytesHash[j] + "*]");
-
+            // agregarLog(mensajelog, "Paso 4 - Posición " + j + " => resultado: " + resultado1 + ", byteHash: " + bytesHash[j]);
         }
-    }
-
-    public void Hashpasoprueba() {//Hecho profe RECORRE EL ARCHIVO
-
-        for (int i = 0; i < bytesOriginales.size(); i++) {//Sacar byte por byte del archivo
-            byte resultado2 = bytesOriginales.get(i);
-            //Recorrer todo el arreglo de hash.
-            for (int j = 0; j < bytesHash.length; j++) {
-                //Ejecutar xor entre el valor de lo que vale xor1 en un momento dado y el valor del byte actual del hash más el valor del indice actual.
-                resultado2 = (byte) (resultado2 ^ (bytesHash[j]));
-                //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
-                bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(resultado2) % rangoSalida.length];
-            }
+        //System.out.println("---4---");
+        for (int i = 0; i < bytesHash.length; i++) {
+            // System.out.print("[" + bytesHash[i] + "]");
+            mensajelog.append("[" + bytesHash[i] + "]");
         }
-
-    }
-
-    public void Hashpaso2() {//Hecho chat yo y profe recorre el archivo
-        //Sacar byte por byte del archivo
-        for (int i = 0; i < bytesOriginales.size(); i++) {
-            byte resultado2 = bytesOriginales.get(i);
-            //Recorrer todo el arreglo de hash.
-            for (int j = 0; j < bytesHash.length; j++) {
-                bytesHash[j] = (byte) ((bytesHash[j] + resultado2) % 256);
-                //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
-                bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(bytesHash[j]) % rangoSalida.length];
-            }
-        }
-
-    }
-
-    public void Hashpaso3() {//SIN RECORRER EL ARCHIVO
-
-        byte numrandom = 7; // Número arbitrario para la mezcla
-        //Recorrer todo el arreglo de hash.
-        for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] * 17) ^ numrandom);
-            numrandom = bytesHash[j];
-            //Asignar a la posición del byte actual el valor que se encuentra en el array del rango de salida.
-            bytesHash[j] = (byte) rangoSalida[Byte.toUnsignedInt(bytesHash[j]) % rangoSalida.length];
-
-        }
-
-    }
-
-    public void Hashpaso4() {//RECORRE EL ARCHIVO
-
-        int sum = 0;
-        for (int i = 0; i < bytesOriginales.size(); i++) {
-            sum += bytesOriginales.get(i) * (i + 1); // Suma ponderada
-            for (int j = 0; j < bytesHash.length; j++) {
-                bytesHash[j] = (byte) ((bytesHash[j] ^ sum) % rangoSalida.length);
-            }
-        }
-
+          mensajelog.append("\n");
+        //System.out.println("-------");
     }
 
     // Paso 5: Sumar posición e índice de cada byte
     //Cada byte del hash se modificará sumándole su índice y el valor del byte en los datos.
     //Propósito: Introducir variabilidad en cada byte del hash basándose en su posición.
-    public void Hashpaso5() {//NO RECORRE EL ARCHIVO
-        for (int j = 0; j < bytesHash.length; j++) {
-            bytesHash[j] = (byte) ((bytesHash[j] + bytesOriginales.get(j % bytesOriginales.size()) + j) % rangoSalida.length);
-        }
-    }
+    public void Hashpaso5() { // NUEVO PASO DE HASH
+        mensajelog.append("\n");
+        agregarLog(mensajelog, "Paso 5 - Sin valores negativos aplicada.");
+        for (int i = 0; i < bytesHash.length; i++) {
+            int valor = (bytesHash[i] + (i * 31)) & 0xFF; // Asegura valores positivos con máscara
+            bytesHash[i] = (byte) valor;
 
-    //Paso 6: Alternar OR y XOR con el índice
-//Se aplica OR en las posiciones pares y XOR en las impares.
-    //Propósito: Hacer que las posiciones pares y las impares del hash evolucionen de forma distinta.
-    public void Hashpaso6() {//NO RECORRE EL ARCHIVO
-        for (int j = 0; j < bytesHash.length; j++) {
-            if (j % 2 == 0) {
-                bytesHash[j] = (byte) ((bytesHash[j] | j) % rangoSalida.length);
-
-            } else {
-                bytesHash[j] = (byte) ((bytesHash[j] ^ j) % rangoSalida.length);
-            }
         }
 
+        //System.out.println("---Nuevo Hash Paso---");
+        for (int i = 0; i < bytesHash.length; i++) {
+            //System.out.print("[" + (bytesHash[i] & 0xFF) + "]"); // Muestra valores positivos
+            mensajelog.append("[" + bytesHash[i] + "]");
+        }
+          mensajelog.append("\n");
+        //System.out.println("-------");
     }
+
+    public void Hashpaso6() { // NUEVO PASO DE HASH CON DESPLAZAMIENTO
+        mensajelog.append("\n");
+        agregarLog(mensajelog, "Paso 6 - Mezcla con XOR y desplazamiento aplicada.");
+        for (int i = 0; i < bytesHash.length; i++) {
+            int valor = ((bytesHash[i] + ((i * 17) ^ 0xA5)) & 0xFF) % rangoSalida.length; // Mezcla con XOR y desplazamiento
+            bytesHash[i] = (byte) valor;
+        }
+
+        //System.out.println("---Nuevo Hash Paso Aleatorio---");
+        for (int i = 0; i < bytesHash.length; i++) {
+            // System.out.print("[" + (bytesHash[i] & 0xFF) + "]"); // Asegura valores positivos en la impresión
+            mensajelog.append("[" + bytesHash[i] + "]");
+        }
+          mensajelog.append("\n");
+        // System.out.println("-------");
+
+    }
+
 }

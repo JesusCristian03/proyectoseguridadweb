@@ -8,6 +8,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -83,7 +86,56 @@ public class MostrarArchivo {
         this.totalBytes = totalBytes;
     }
 
-    public void procesarArchivo(File archivo) {//Procesa para poner los caracteres en la tabla principal
+    public void procesarArchivo(File archivo) {
+        try {
+            // Leer todo el archivo en un solo String usando una codificación adecuada (UTF-8 o la que corresponda)
+            byte[] bytes = Files.readAllBytes(archivo.toPath());
+
+            // Convertir el byte array a String con la codificación UTF-8 (puedes cambiar a ISO-8859-1 o la que sea adecuada para tu archivo)
+            // Convertir a String usando ISO-8859-1 para mantener caracteres acentuados en un solo byte
+            String contenido = new String(bytes, Charset.forName("ISO-8859-1"));
+
+            // Ahora puedes procesar el contenido del archivo correctamente
+            System.out.println("Contenido del archivo: ");
+            System.out.println(contenido);
+
+            // Si necesitas seguir procesando en bytes, puedes continuar
+            byteList.clear();
+            for (byte b : bytes) {
+                byteList.add(b);
+            }
+                char c = (char) (160 & 0xFF);
+            System.out.println("Valor de que: "+c);
+            for (int i = 0; i < byteList.size(); i++) {
+                System.out.print("{" + byteList.get(i) + "}");
+
+            }
+        
+            totalBytes = byteList.size();
+            convertirAFormatoTabla(byteList, 11);
+        } catch (IOException e) {
+            System.out.println("Error al leer el archivo");
+        }
+    }
+
+    public void procesarArchivo2(String filePath) throws IOException {
+        File file = new File(filePath);
+        byte[] data = new byte[(int) file.length()];
+        FileInputStream fis = new FileInputStream(file);
+        byteList = new ArrayList<>();
+        byteList.clear();
+        fis.read(data);
+        fis.close();
+        for (byte b : data) {
+            byteList.add(b);
+        }
+        totalBytes = byteList.size();//El tamaño total de la lista de bytes que hay en el txt
+
+        convertirAFormatoTabla(byteList, 11);
+        //return byteList;
+    }
+
+    public void procesarArchivo1(File archivo) {//Procesa para poner los caracteres en la tabla principal
         try ( BufferedInputStream bis = new BufferedInputStream(new FileInputStream(archivo))) {
 
             int byteValue;
@@ -124,13 +176,13 @@ public class MostrarArchivo {
                 indicesInsertados.add(listatitulos.size() - 1); // Guardamos el índice donde lo insertamos
                 contador++;
                 x++;
-              
+
             }
             listatitulos.add(valor);
             x++;
-            
+
         }
-        System.out.println("Valor de x: "+getX());
+        System.out.println("Valor de x: " + getX());
         // Si al final falta agregar otro número
         if (listatitulos.size() == contador * 11) {
             listatitulos.add(contador * 10);
@@ -147,16 +199,6 @@ public class MostrarArchivo {
         int numFilas = (int) Math.ceil((double) listatitulos.size() / numColumnas);
         asciiData = new String[numFilas][numColumnas];
         hexData = new String[numFilas][numColumnas];
-
-        /*   // Convertir a ASCII y Hexadecimal
-        for (int i = 0; i < lista.size(); i++) {
-            int fila = i / numColumnas;
-            int columna = i % numColumnas;
-            int valor = lista.get(i);
-                System.out.print("["+(char) valor +"]");
-            asciiData[fila][columna] = (char) valor + ""; // Convertir a ASCII
-            hexData[fila][columna] = String.format("%02X", valor); // Convertir a Hex
-        }*/
         // Llenar las tablas correctamente
         int index = 0;
         for (int fila = 0; fila < numFilas; fila++) {
