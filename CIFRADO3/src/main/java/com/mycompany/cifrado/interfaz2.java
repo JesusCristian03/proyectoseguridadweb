@@ -43,6 +43,7 @@ public class interfaz2 extends javax.swing.JFrame {
     public interfaz2() {
         Tablas tabla= new Tablas();
         initComponents();
+        insertarTablas();
         //COMPORTAMIENTO TABLAS ARCHIVO
         inicializarcomportamientoarchivo = new ComportamientoDeTablas(tableASCII,
                 tableHex,
@@ -1260,6 +1261,9 @@ public class interfaz2 extends javax.swing.JFrame {
         tableASCII.setModel(new DefaultTableModel(abrir.getAsciiData(), columnNames));//Esto actualiza la tabla con nuevos datos.
         tableHex.setModel(new DefaultTableModel(abrir.getHexData(), columnNames));
     }
+    public void insertarTablas(){
+    
+    }
     private void GuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarActionPerformed
         // TODO add your handling code here:
         inicializarcomportamientocifrado.guardarArchivo(this, metodosarchivo.getEncryptedBytes());
@@ -1310,7 +1314,7 @@ public class interfaz2 extends javax.swing.JFrame {
 
     private void btnDescifrar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescifrar1ActionPerformed
        
-
+// metodosarchivo.agregarLog(mensajelog, "DESCIFRANDO ARCHIVO....");
         //Se necesita darle la lista de bytes tomados del archivo y el total de bytes
         archivonormal.setByteList(archivonormal.convertirAArrayList(archivonormal.getAsciiData()));
 

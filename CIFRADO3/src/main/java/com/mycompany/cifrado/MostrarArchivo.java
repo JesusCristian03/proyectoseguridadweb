@@ -86,37 +86,25 @@ public class MostrarArchivo {
         this.totalBytes = totalBytes;
     }
 
-    public void procesarArchivo(File archivo) {
-        try {
-            // Leer todo el archivo en un solo String usando una codificación adecuada (UTF-8 o la que corresponda)
-            byte[] bytes = Files.readAllBytes(archivo.toPath());
+   public void procesarArchivo(File archivo) {
+    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(archivo))) {
+        byte[] buffer = new byte[8192]; // 8 KB
+        int bytesRead;
+        byteList.clear();
 
-            // Convertir el byte array a String con la codificación UTF-8 (puedes cambiar a ISO-8859-1 o la que sea adecuada para tu archivo)
-            // Convertir a String usando ISO-8859-1 para mantener caracteres acentuados en un solo byte
-            String contenido = new String(bytes, Charset.forName("ISO-8859-1"));
-
-            // Ahora puedes procesar el contenido del archivo correctamente
-            System.out.println("Contenido del archivo: ");
-            System.out.println(contenido);
-
-            // Si necesitas seguir procesando en bytes, puedes continuar
-            byteList.clear();
-            for (byte b : bytes) {
-                byteList.add(b);
+        while ((bytesRead = bis.read(buffer)) != -1) {
+            for (int i = 0; i < bytesRead; i++) {
+                byteList.add(buffer[i]);
             }
-                char c = (char) (160 & 0xFF);
-            System.out.println("Valor de que: "+c);
-            for (int i = 0; i < byteList.size(); i++) {
-                System.out.print("{" + byteList.get(i) + "}");
-
-            }
-        
-            totalBytes = byteList.size();
-            convertirAFormatoTabla(byteList, 11);
-        } catch (IOException e) {
-            System.out.println("Error al leer el archivo");
         }
+
+        totalBytes = byteList.size();
+        convertirAFormatoTabla(byteList, 11);
+    } catch (IOException e) {
+        System.out.println("Error al leer el archivo");
     }
+}
+
 
     public void procesarArchivo2(String filePath) throws IOException {
         File file = new File(filePath);

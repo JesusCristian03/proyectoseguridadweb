@@ -182,7 +182,7 @@ public class OperacionesCifradosHash {
         agregarLog(mensajelog, "DESCIFRANDO ARCHIVO....");
         int[] claves = generarClaves(password);
         byte[] resultado = new byte[bytesCifrados.size()];
-        mensajelog.setText("");
+
         for (int i = 0; i < bytesCifrados.size(); i++) {
             byte b = bytesCifrados.get(i);
             mensajelog.append("\n Revisado-> " + i + " Byte cifrado: " + b + "\n");
